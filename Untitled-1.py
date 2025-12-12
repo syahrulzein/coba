@@ -15,13 +15,6 @@ st.line_chart(df['age'].value_counts().sort_index())
 st.write('**3. Visualisasi Data - Tipe Pekerjaan**')
 st.bar_chart(df['work_type'].value_counts())
 
-#4. Visualisasi Data - Jenis Kelamin
-st.write('**4. Visualisasi Data - Jenis Kelamin**')
-category_df = df['gender'].value_counts(dropna=False).reset_index()
-category_df.columns = ['gender', 'count']
-fig = px.pie(category_df, names='gender', values='count')
-st.plotly_chart(fig, use_container_width=True)
-
 #5. Interaktif Komponen
 st.write('**5. Button**')
 st.button("Reset", type="primary")
