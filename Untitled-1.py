@@ -1,8 +1,8 @@
 import streamlit as st
 import pandas as pd
-import altair as alt
+import plotly.express as px
 
-df = pd.read_excel('healthcare-dataset-stroke-data.xlsx', engine='openpyxl')
+df = pd.read_csv('healthcare-dataset-stroke-data.csv')
 
 #1. Membaca Dataset
 st.write('**1. Dataset**')
@@ -10,37 +10,18 @@ st.dataframe(df.head())
 
 #2. Visualisasi Data - Jumlah Pasien Berdasarkan Usia
 st.write('**2. Visualisasi Data - Jumlah Pasien Berdasarkan Usia**')
-age_count = df['age'].value_counts().reset_index()
-age_count.columns = ['age', 'count']
-
-chart_age = (
-    alt.Chart(age_count)
-    .mark_line(point=True)
-    .encode(
-        x=alt.X('age:Q', title='Age'),
-        y=alt.Y('count:Q', title='Jumlah Pasien'),
-        tooltip=['age', 'count']
-    )
-    .properties(height=300)
-)
-st.altair_chart(chart_age, use_container_width=True)
+st.line_chart(df['age'].value_counts().sort_index())
 
 #3. Visualisasi Data - Tipe Pekerjaan
 st.write('**3. Visualisasi Data - Tipe Pekerjaan**')
-work_count = df['work_type'].value_counts().reset_index()
-work_count.columns = ['work_type', 'count']
+st.bar_chart(df['work_type'].value_counts())
 
-chart_work = (
-    alt.Chart(work_count)
-    .mark_bar()
-    .encode(
-        x=alt.X('work_type:N', title='Work Type'),
-        y=alt.Y('count:Q', title='Jumlah'),
-        tooltip=['work_type', 'count']
-    )
-    .properties(height=300)
-)
-st.altair_chart(chart_work, use_container_width=True)
+#4. Visualisasi Data - Jenis Kelamin
+st.write('**4. Visualisasi Data - Jenis Kelamin**')
+category_df = df['gender'].value_counts(dropna=False).reset_index()
+category_df.columns = ['gender', 'count']
+fig = px.pie(category_df, names='gender', values='count')
+st.plotly_chart(fig, use_container_width=True)
 
 #5. Interaktif Komponen
 st.write('**5. Button**')
@@ -115,23 +96,22 @@ col1, col2= st.columns(2)
 
 with col1:
     st.write('**Jumlah Pasien Berdasarkan Usia**')
-    st.altair_chart(chart_age, use_container_width=True)
+    st.line_chart(df['age'].value_counts().sort_index())
 
 with col2:
     st.write('**Visualisasi Data - Tipe Pekerjaan**')
-    st.altair_chart(chart_work, use_container_width=True)
+    st.bar_chart(df['work_type'].value_counts())
 
 #14. Membuat tab
 st.write('**14. Membuat Tab**')
-tab1, tab2 = st.tabs(["Line", "Bar"])
+tab1, tab2= st.tabs(["Line", "Bar"])
 
 with tab1:
     st.write('**Jumlah Pasien Berdasarkan Usia**')
-    st.altair_chart(chart_age, use_container_width=True)
-
+    st.line_chart(df['age'].value_counts().sort_index())
 with tab2:
     st.write('**Visualisasi Data - Tipe Pekerjaan**')
-    st.altair_chart(chart_work, use_container_width=True)
+    st.bar_chart(df['work_type'].value_counts())
 
 #15. Expander
 st.write('**15. Expander**')
