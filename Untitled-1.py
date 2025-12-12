@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import altair as alt
 
 df = pd.read_excel('healthcare-dataset-stroke-data.xlsx', engine='openpyxl')
 
@@ -9,11 +10,37 @@ st.dataframe(df.head())
 
 #2. Visualisasi Data - Jumlah Pasien Berdasarkan Usia
 st.write('**2. Visualisasi Data - Jumlah Pasien Berdasarkan Usia**')
-st.line_chart(df['age'].value_counts().sort_index())
+age_count = df['age'].value_counts().reset_index()
+age_count.columns = ['age', 'count']
+
+chart_age = (
+    alt.Chart(age_count)
+    .mark_line(point=True)
+    .encode(
+        x=alt.X('age:Q', title='Age'),
+        y=alt.Y('count:Q', title='Jumlah Pasien'),
+        tooltip=['age', 'count']
+    )
+    .properties(height=300)
+)
+st.altair_chart(chart_age, use_container_width=True)
 
 #3. Visualisasi Data - Tipe Pekerjaan
 st.write('**3. Visualisasi Data - Tipe Pekerjaan**')
-st.bar_chart(df['work_type'].value_counts())
+work_count = df['work_type'].value_counts().reset_index()
+work_count.columns = ['work_type', 'count']
+
+chart_work = (
+    alt.Chart(work_count)
+    .mark_bar()
+    .encode(
+        x=alt.X('work_type:N', title='Work Type'),
+        y=alt.Y('count:Q', title='Jumlah'),
+        tooltip=['work_type', 'count']
+    )
+    .properties(height=300)
+)
+st.altair_chart(chart_work, use_container_width=True)
 
 #5. Interaktif Komponen
 st.write('**5. Button**')
@@ -88,22 +115,23 @@ col1, col2= st.columns(2)
 
 with col1:
     st.write('**Jumlah Pasien Berdasarkan Usia**')
-    st.line_chart(df['age'].value_counts().sort_index())
+    st.altair_chart(chart_age, use_container_width=True)
 
 with col2:
     st.write('**Visualisasi Data - Tipe Pekerjaan**')
-    st.bar_chart(df['work_type'].value_counts())
+    st.altair_chart(chart_work, use_container_width=True)
 
 #14. Membuat tab
 st.write('**14. Membuat Tab**')
-tab1, tab2= st.tabs(["Line", "Bar"])
+tab1, tab2 = st.tabs(["Line", "Bar"])
 
 with tab1:
     st.write('**Jumlah Pasien Berdasarkan Usia**')
-    st.line_chart(df['age'].value_counts().sort_index())
+    st.altair_chart(chart_age, use_container_width=True)
+
 with tab2:
     st.write('**Visualisasi Data - Tipe Pekerjaan**')
-    st.bar_chart(df['work_type'].value_counts())
+    st.altair_chart(chart_work, use_container_width=True)
 
 #15. Expander
 st.write('**15. Expander**')
@@ -114,7 +142,3 @@ with st.expander("See explanation"):
         be random.
     ''')
     st.image("https://static.streamlit.io/examples/dice.jpg")
-
-
-
-
