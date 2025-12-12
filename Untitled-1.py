@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-df = pd.read_csv('healthcare-dataset-stroke-data.csv')
+df = pd.read_excel('healthcare-dataset-stroke-data.xlsx')
 
 #1. Membaca Dataset
 st.write('**1. Dataset**')
